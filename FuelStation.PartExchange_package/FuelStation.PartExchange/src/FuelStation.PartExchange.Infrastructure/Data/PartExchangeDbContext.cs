@@ -9,7 +9,7 @@ public class PartExchangeDbContext : DbContext
     {
     }
 
-    public DbSet<FuelStation> FuelStations { get; set; } = null!;
+    public DbSet<Domain.Entities.FuelStation> FuelStations { get; set; } = null!;
     public DbSet<Part> Parts { get; set; } = null!;
     public DbSet<StationInventory> StationInventories { get; set; } = null!;
     public DbSet<PartRequest> PartRequests { get; set; } = null!;
@@ -20,7 +20,7 @@ public class PartExchangeDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<FuelStation>(b =>
+        modelBuilder.Entity<Domain.Entities.FuelStation>(b =>
         {
             b.HasKey(x => x.Id);
             b.Property(x => x.Name).HasMaxLength(200).IsRequired();
