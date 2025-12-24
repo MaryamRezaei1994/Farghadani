@@ -27,7 +27,7 @@ public static class StaticData
     public static string ReminderDatabaseEncryptionKey { get; set; } = "SgVkYp3s6v9y$B&E)H@McQfThWmZq4t7";
     public static string WashingMachineDatabaseEncryptionKey { get; set; } = "SgVkYp3s6v9y$B&E)H@McQfThWmZq4t7";
     public static string ScenarioDatabaseEncryptionKey { get; set; } = "SgVkYp3s6v9y$B&E)H@McQfThWmZq4t7";
-    public static string JwtSecurityKey { get; set; } = "hdyoEFkmE478sDVw23K87DClhSuy64DQokE38IhQ";
+    // JWT handled by API Gateway; key removed from app static config
     public static string? All_PostgreSqlCon { get; set; }
     public static string? WM_PostgreSqlCon { get; set; }
     public static string? Redis { get; set; }
@@ -225,7 +225,7 @@ public static class StaticData
                 break;
         }
 #else
-                JwtSecurityKey = Environment.GetEnvironmentVariable("JWT_SECURITY_KEY");
+                // JwtSecurityKey handled by API Gateway; nothing to set here
                 DatabaseEncryptionKey = System.Environment.GetEnvironmentVariable("DB_ENCRYPTION_KEY");
                 ReminderDatabaseEncryptionKey = System.Environment.GetEnvironmentVariable("REMINDER_DB_ENCRYPTION_KEY");
                 WashingMachineDatabaseEncryptionKey = System.Environment.GetEnvironmentVariable("WASHING_MACHINE_DB_ENCRYPTION_KEY");

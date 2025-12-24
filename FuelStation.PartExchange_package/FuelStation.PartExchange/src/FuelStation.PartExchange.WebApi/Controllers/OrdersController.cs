@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FuelStation.PartExchange.Domain.Interfaces;
 using FuelStation.PartExchange.Domain.Enums;
-using Microsoft.AspNetCore.Authorization;
+// authorization handled by API Gateway
 
 namespace FuelStation.PartExchange.WebApi.Controllers;
 
@@ -31,7 +31,6 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetAll() => Ok(new { message = "Not implemented: list orders" });
 
     [HttpPost("{id:guid}/confirm")]
-    [Authorize(Policy = "SupplierOnly")]
     /// <summary>
     /// Confirms the specified order.
     /// </summary>

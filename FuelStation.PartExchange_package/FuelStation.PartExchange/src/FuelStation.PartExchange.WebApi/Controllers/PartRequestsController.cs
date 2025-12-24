@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using FuelStation.PartExchange.Application.Services;
-using Microsoft.AspNetCore.Authorization;
+// authorization handled by API Gateway
 
 namespace FuelStation.PartExchange.WebApi.Controllers;
 
@@ -19,7 +19,6 @@ public class PartRequestsController : ControllerBase
     public PartRequestsController(PartRequestService service) => _service = service;
 
     [HttpPost]
-    [Authorize(Policy = "OperatorOnly")]
     /// <summary>
     /// Creates a new part request.
     /// </summary>
