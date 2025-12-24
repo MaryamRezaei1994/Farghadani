@@ -3,17 +3,39 @@ using FuelStation.PartExchange.Infrastructure;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.EntityFrameworkCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+// In-memory caching for services
+builder.Services.AddMemoryCache();
+
+// Swagger + JWT support
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "FuelStation.PartExchange API", Version = "v1" });
+
+    var jwtScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer {token}'"
+    };
+    c.AddSecurityDefinition("Bearer", jwtScheme);
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        [jwtScheme] = new string[] { }
+    });
 });
 
+// Register infrastructure (DbContext, repositories, etc.)
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddScoped<PartRequestService>();
 
@@ -59,6 +81,24 @@ else
 {
     app.UseExceptionHandler("/error");
 }
+
+// Redirect root to Swagger UI
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path == "/")
+    {
+        context.Response.Redirect("/swagger");
+        return;
+    }
+    await next();
+});
+
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "FuelStation.PartExchange API v1");
+    options.RoutePrefix = string.Empty; // serve swagger at app root if desired
+});
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
