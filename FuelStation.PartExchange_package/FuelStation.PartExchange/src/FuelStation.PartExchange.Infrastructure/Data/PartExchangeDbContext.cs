@@ -5,9 +5,11 @@ namespace FuelStation.PartExchange.Infrastructure.Data;
 
 public class PartExchangeDbContext : DbContext
 {
-    public PartExchangeDbContext(DbContextOptions<PartExchangeDbContext> options) : base(options) { }
+    public PartExchangeDbContext(DbContextOptions<PartExchangeDbContext> options) : base(options)
+    {
+    }
 
-    public DbSet<Domain.Entities.FuelStation> FuelStations { get; set; } = null!;
+    public DbSet<FuelStation> FuelStations { get; set; } = null!;
     public DbSet<Part> Parts { get; set; } = null!;
     public DbSet<StationInventory> StationInventories { get; set; } = null!;
     public DbSet<PartRequest> PartRequests { get; set; } = null!;
@@ -18,24 +20,44 @@ public class PartExchangeDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Domain.Entities.FuelStation>(eb =>
+        modelBuilder.Entity<FuelStation>(b =>
         {
-            eb.HasKey(x => x.Id);
-            eb.Property(x => x.Name).HasMaxLength(200).IsRequired();
-            eb.Property(x => x.City).HasMaxLength(100).IsRequired();
-            eb.Property(x => x.Address).HasMaxLength(500);
+            b.HasKey(x => x.Id);
+            b.Property(x => x.Name).HasMaxLength(200).IsRequired();
+            b.Property(x => x.City).HasMaxLength(100).IsRequired();
+            b.Property(x => x.Address).HasMaxLength(500);
         });
 
-        modelBuilder.Entity<Part>(eb =>
+        modelBuilder.Entity<Part>(b =>
         {
-            eb.HasKey(x => x.Id);
-            eb.Property(x => x.PartNumber).IsRequired();
-            eb.HasIndex(x => x.PartNumber).IsUnique();
+            b.HasKey(x => x.Id);
+            b.Property(x => x.PartNumber).IsRequired();
+            b.HasIndex(x => x.PartNumber).IsUnique();
         });
 
-        modelBuilder.Entity<StationInventory>(eb =>
+        modelBuilder.Entity<StationInventory>(b =>
         {
-            eb.HasKey(x => new { x.StationId, x.PartId });
+            b.HasKey(x => new { x.StationId, x.PartId });
+        });
+
+        modelBuilder.Entity<PartRequest>(b =>
+        {
+            b.HasKey(x => x.Id);
+            b.Property(x => x.PartNumber).IsRequired();
+            // Set default CreatedAt to current time in database (Postgres: NOW())
+            b.Property(x => x.CreatedAt).HasDefaultValueSql("NOW()");
+        });
+
+        modelBuilder.Entity<Order>(b =>
+        {
+            b.HasKey(x => x.Id);
+            b.Property(x => x.CreatedAt).HasDefaultValueSql("NOW()");
+        });
+
+        modelBuilder.Entity<Invoice>(b =>
+        {
+            b.HasKey(x => x.Id);
+            b.Property(x => x.IssuedAt).HasDefaultValueSql("NOW()");
         });
     }
 }
