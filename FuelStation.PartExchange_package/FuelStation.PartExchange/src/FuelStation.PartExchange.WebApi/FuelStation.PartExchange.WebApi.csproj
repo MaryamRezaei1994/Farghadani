@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FuelStation.PartExchange.Domain\FuelStation.PartExchange.Domain.csproj" />
+    <ProjectReference Include="..\FuelStation.PartExchange.Application\FuelStation.PartExchange.Application.csproj" />
+    <ProjectReference Include="..\FuelStation.PartExchange.Infrastructure\FuelStation.PartExchange.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.15.0" />
+  </ItemGroup>
+</Project>

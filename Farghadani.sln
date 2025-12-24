@@ -1,0 +1,56 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FuelStation.PartExchange_package", "FuelStation.PartExchange_package", "{D445837D-6DC6-B605-17C1-463172F1CF30}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FuelStation.PartExchange", "FuelStation.PartExchange", "{89926B01-1BB9-E7F1-B26A-5E4321012BAB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6408CE01-E968-2118-6FF2-39A10FD605A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuelStation.PartExchange.Application", "FuelStation.PartExchange_package\FuelStation.PartExchange\src\FuelStation.PartExchange.Application\FuelStation.PartExchange.Application.csproj", "{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuelStation.PartExchange.Domain", "FuelStation.PartExchange_package\FuelStation.PartExchange\src\FuelStation.PartExchange.Domain\FuelStation.PartExchange.Domain.csproj", "{A90D89FC-218D-5452-7E74-C8DE637FCCAE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuelStation.PartExchange.Infrastructure", "FuelStation.PartExchange_package\FuelStation.PartExchange\src\FuelStation.PartExchange.Infrastructure\FuelStation.PartExchange.Infrastructure.csproj", "{9203B978-034F-8E1C-E60D-7554741FD9BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FuelStation.PartExchange.WebApi", "FuelStation.PartExchange_package\FuelStation.PartExchange\src\FuelStation.PartExchange.WebApi\FuelStation.PartExchange.WebApi.csproj", "{FF712D52-CEFA-1583-5486-9F184C52F170}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A90D89FC-218D-5452-7E74-C8DE637FCCAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A90D89FC-218D-5452-7E74-C8DE637FCCAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A90D89FC-218D-5452-7E74-C8DE637FCCAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A90D89FC-218D-5452-7E74-C8DE637FCCAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9203B978-034F-8E1C-E60D-7554741FD9BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9203B978-034F-8E1C-E60D-7554741FD9BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9203B978-034F-8E1C-E60D-7554741FD9BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9203B978-034F-8E1C-E60D-7554741FD9BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF712D52-CEFA-1583-5486-9F184C52F170}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF712D52-CEFA-1583-5486-9F184C52F170}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF712D52-CEFA-1583-5486-9F184C52F170}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF712D52-CEFA-1583-5486-9F184C52F170}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{89926B01-1BB9-E7F1-B26A-5E4321012BAB} = {D445837D-6DC6-B605-17C1-463172F1CF30}
+		{6408CE01-E968-2118-6FF2-39A10FD605A3} = {89926B01-1BB9-E7F1-B26A-5E4321012BAB}
+		{F4FE8154-02F3-D71D-19F9-8C4AA8C99B71} = {6408CE01-E968-2118-6FF2-39A10FD605A3}
+		{A90D89FC-218D-5452-7E74-C8DE637FCCAE} = {6408CE01-E968-2118-6FF2-39A10FD605A3}
+		{9203B978-034F-8E1C-E60D-7554741FD9BE} = {6408CE01-E968-2118-6FF2-39A10FD605A3}
+		{FF712D52-CEFA-1583-5486-9F184C52F170} = {6408CE01-E968-2118-6FF2-39A10FD605A3}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F119255E-0812-4F2B-8D56-367CF1876FF0}
+	EndGlobalSection
+EndGlobal
