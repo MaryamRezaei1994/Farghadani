@@ -1,6 +1,7 @@
 using FuelStation.PartExchange.Application.Services;
 using FuelStation.PartExchange.Infrastructure;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,12 @@ builder.Services.AddControllers();
 
 // In-memory caching for services
 builder.Services.AddMemoryCache();
+
+// DbContext (explicit registration using a local connection string)
+var s = "Server=127.0.0.1;Port=5432;Database=postgres;User Id=postgres;Password=Abc@1234;Include Error Detail=true";
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<PartExchangeDbContext>(options =>
+    options.UseNpgsql(s));
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
