@@ -21,7 +21,6 @@ public static class DependencyInjection
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<IUnitOfWork, InfrastructureUnitOfWork>();
         services.AddScoped<IPartMatchingService, PartMatchingService>();
-        services.AddScoped<DataSeeder>();
 
         return services;
     }

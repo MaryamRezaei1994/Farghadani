@@ -65,19 +65,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var seeder = services.GetRequiredService<FuelStation.PartExchange.Infrastructure.Data.DataSeeder>();
-        seeder.SeedAsync().GetAwaiter().GetResult();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetService<ILogger<Program>>();
-        logger?.LogError(ex, "An error occurred while migrating or seeding the database.");
-    }
-}
-
 app.Run();
