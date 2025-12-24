@@ -4,6 +4,9 @@ using Microsoft.Extensions.Logging;
 
 namespace FuelStation.PartExchange.Application.Services;
 
+/// <summary>
+/// Application service responsible for creating part requests and related orders.
+/// </summary>
 public class PartRequestService
 {
     private readonly IFuelStationRepository _stationRepo;
@@ -13,6 +16,9 @@ public class PartRequestService
     private readonly IPartMatchingService _matchingService;
     private readonly ILogger<PartRequestService> _logger;
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="PartRequestService"/>.
+    /// </summary>
     public PartRequestService(
         IFuelStationRepository stationRepo,
         IPartInventoryRepository inventoryRepo,
@@ -29,6 +35,13 @@ public class PartRequestService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Creates a part request and attempts to match it with available suppliers.
+    /// </summary>
+    /// <param name="requestingStationId">The station requesting the part.</param>
+    /// <param name="partNumber">The part number requested.</param>
+    /// <param name="quantity">Requested quantity.</param>
+    /// <returns>The created <see cref="PartRequest"/>, possibly with match information.</returns>
     public async Task<PartRequest?> CreatePartRequestAsync(Guid requestingStationId, string partNumber, int quantity)
     {
         if (quantity <= 0) throw new ArgumentException("Quantity must be > 0", nameof(quantity));

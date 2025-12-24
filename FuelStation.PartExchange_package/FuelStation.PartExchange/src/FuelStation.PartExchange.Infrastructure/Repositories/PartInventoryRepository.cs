@@ -5,17 +5,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FuelStation.PartExchange.Infrastructure.Repositories;
 
+/// <summary>
+/// Repository for managing station inventory and parts.
+/// </summary>
 public class PartInventoryRepository : IPartInventoryRepository
 {
     private readonly PartExchangeDbContext _db;
 
     public PartInventoryRepository(PartExchangeDbContext db) => _db = db;
 
+    /// <summary>
+    /// Adds inventory for a station.
+    /// </summary>
+    /// <param name="inventory">Station inventory entity.</param>
     public async Task AddInventoryAsync(StationInventory inventory)
     {
         await _db.StationInventories.AddAsync(inventory);
     }
 
+    /// <summary>
+    /// Decreases inventory quantity for a given station and part.
+    /// </summary>
     public async Task DecreaseInventoryAsync(Guid stationId, Guid partId, int quantity)
     {
         var inv = await _db.StationInventories.FindAsync(new object[] { stationId, partId });
@@ -23,6 +33,9 @@ public class PartInventoryRepository : IPartInventoryRepository
         inv.Quantity -= quantity;
     }
 
+    /// <summary>
+    /// Retrieves inventory for a specific station and part number.
+    /// </summary>
     public async Task<StationInventory?> GetInventoryAsync(Guid stationId, string partNumber)
     {
         var part = await _db.Parts.FirstOrDefaultAsync(p => p.PartNumber == partNumber);
@@ -30,6 +43,9 @@ public class PartInventoryRepository : IPartInventoryRepository
         return await _db.StationInventories.FindAsync(new object[] { stationId, part.Id }) as StationInventory;
     }
 
+    /// <summary>
+    /// Finds stations in the specified city that have the given part in stock.
+    /// </summary>
     public async Task<IEnumerable<(Domain.Entities.FuelStation Station, StationInventory Inventory)>> FindPartInCityAsync(string city, string partNumber)
     {
         var part = await _db.Parts.FirstOrDefaultAsync(p => p.PartNumber == partNumber);
