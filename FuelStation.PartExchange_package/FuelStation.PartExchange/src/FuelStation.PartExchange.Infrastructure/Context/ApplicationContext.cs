@@ -1,26 +1,29 @@
+﻿using System.Text.Json;
+using FuelStation.PartExchange.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using FuelStation.PartExchange.Domain.Entities;
 
-namespace FuelStation.PartExchange.Infrastructure.Data;
 
-public class PartExchangeDbContext : DbContext
+namespace FuelStation.PartExchange.Infrastructure.Context;
+
+public class ApplicationContext(DbContextOptions<ApplicationContext> options) : DbContext(options)
 {
-    public PartExchangeDbContext(DbContextOptions<PartExchangeDbContext> options) : base(options)
-    {
-    }
-
-    public DbSet<Domain.Entities.FuelStation> FuelStations { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<Domain.Models.FuelStation> FuelStations { get; set; } = null!;
     public DbSet<Part> Parts { get; set; } = null!;
     public DbSet<StationInventory> StationInventories { get; set; } = null!;
-    public DbSet<PartRequest> PartRequests { get; set; } = null!;
-    public DbSet<Order> Orders { get; set; } = null!;
-    public DbSet<Invoice> Invoices { get; set; } = null!;
+    public DbSet<PartRequest> PartRequest { get; set; } = null!;
+    public DbSet<Invoice> Invoice { get; set; } = null!;
+    public DbSet<EmbeddedMapping> EmbeddedMapping { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Domain.Entities.FuelStation>(b =>
+        modelBuilder.HasDefaultSchema("FuelStation");
+
+        modelBuilder.Entity<Order>().HasQueryFilter(x => x.IsDeleted == false);
+        
+        modelBuilder.Entity<Domain.Models.FuelStation>(b =>
         {
             b.HasKey(x => x.Id);
             b.Property(x => x.Name).HasMaxLength(200).IsRequired();
@@ -48,16 +51,23 @@ public class PartExchangeDbContext : DbContext
             b.Property(x => x.CreatedAt).HasDefaultValueSql("NOW()");
         });
 
-        modelBuilder.Entity<Order>(b =>
-        {
-            b.HasKey(x => x.Id);
-            b.Property(x => x.CreatedAt).HasDefaultValueSql("NOW()");
-        });
-
         modelBuilder.Entity<Invoice>(b =>
         {
             b.HasKey(x => x.Id);
             b.Property(x => x.IssuedAt).HasDefaultValueSql("NOW()");
+        });
+        modelBuilder.Entity<EmbeddedMapping>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Key).IsUnique();
+
+            entity.Property(e => e.Data)
+                .HasColumnType("jsonb")
+                .HasConversion(
+                    v => JsonSerializer.Serialize(v, JsonSerializerOptions.Default),
+                    v => JsonSerializer.Deserialize<Dictionary<string, object>>(v, JsonSerializerOptions.Default)
+                         ?? new Dictionary<string, object>()
+                );
         });
     }
 }

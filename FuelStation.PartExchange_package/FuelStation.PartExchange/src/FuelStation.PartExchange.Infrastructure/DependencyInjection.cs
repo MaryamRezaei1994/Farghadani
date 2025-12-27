@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using FuelStation.PartExchange.Domain.Interfaces;
-using FuelStation.PartExchange.Infrastructure.Data;
+using FuelStation.PartExchange.Infrastructure.Context;
 using FuelStation.PartExchange.Infrastructure.Repositories;
 using FuelStation.PartExchange.Infrastructure.Services;
 
@@ -13,7 +13,7 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var conn = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<PartExchangeDbContext>(opt =>
+        services.AddDbContext<ApplicationContext>(opt =>
             opt.UseNpgsql(conn));
 
         services.AddScoped<IFuelStationRepository, FuelStationRepository>();

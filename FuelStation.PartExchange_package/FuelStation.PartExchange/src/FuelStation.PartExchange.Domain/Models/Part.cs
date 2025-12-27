@@ -1,4 +1,4 @@
-namespace FuelStation.PartExchange.Domain.Entities;
+namespace FuelStation.PartExchange.Domain.Models;
 
 public class Part
 {

@@ -1,8 +1,9 @@
-using FuelStation.PartExchange.Domain.Entities;
+using FuelStation.PartExchange.Domain.Models;
 
 namespace FuelStation.PartExchange.Domain.Interfaces;
 
 public interface IPartMatchingService
 {
-    Task<IEnumerable<(Entities.FuelStation Station, StationInventory Inventory)>> FindSuppliersAsync(Guid requestingStationId, string partNumber, int quantity);
+    Task<List<(Models.FuelStation Station, StationInventory Inventory)>> FindPartInCityAsync(Guid requestingStationId,
+        int quantity, string partNumber);
 }

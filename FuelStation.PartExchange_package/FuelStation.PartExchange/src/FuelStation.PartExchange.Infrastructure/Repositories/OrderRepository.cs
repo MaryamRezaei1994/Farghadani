@@ -1,15 +1,15 @@
-using FuelStation.PartExchange.Domain.Entities;
 using FuelStation.PartExchange.Domain.Interfaces;
-using FuelStation.PartExchange.Infrastructure.Data;
+using FuelStation.PartExchange.Domain.Models;
+using FuelStation.PartExchange.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace FuelStation.PartExchange.Infrastructure.Repositories;
 
 public class OrderRepository : IOrderRepository
 {
-    private readonly PartExchangeDbContext _db;
+    private readonly ApplicationContext _db;
 
-    public OrderRepository(PartExchangeDbContext db) => _db = db;
+    public OrderRepository(ApplicationContext db) => _db = db;
 
     public async Task AddAsync(Order order)
     {

@@ -1,6 +1,6 @@
 using FuelStation.PartExchange.Application.Services;
 using FuelStation.PartExchange.Infrastructure;
-using FuelStation.PartExchange.Infrastructure.Data;
+using FuelStation.PartExchange.Infrastructure.Context;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +14,7 @@ builder.Services.AddMemoryCache();
 // DbContext (explicit registration using a local connection string)
 var s = "Server=127.0.0.1;Port=5432;Database=postgres;User Id=postgres;Password=Abc@1234;Include Error Detail=true";
 
-builder.Services.AddDbContext<PartExchangeDbContext>(options =>
+builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(s));
 
 // Swagger
@@ -26,7 +26,7 @@ builder.Services.AddSwaggerGen(c =>
 
 // Register infrastructure (DbContext, repositories, etc.)
 builder.Services.AddInfrastructure(builder.Configuration);
-builder.Services.AddScoped<PartRequestService>();
+builder.Services.AddScoped<OrderPartService>();
 
 // No authentication/authorization here — handled by API Gateway
 

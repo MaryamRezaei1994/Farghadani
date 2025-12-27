@@ -1,6 +1,6 @@
-using FuelStation.PartExchange.Domain.Entities;
 using FuelStation.PartExchange.Domain.Interfaces;
-using FuelStation.PartExchange.Infrastructure.Data;
+using FuelStation.PartExchange.Domain.Models;
+using FuelStation.PartExchange.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace FuelStation.PartExchange.Infrastructure.Repositories;
@@ -10,9 +10,9 @@ namespace FuelStation.PartExchange.Infrastructure.Repositories;
 /// </summary>
 public class PartInventoryRepository : IPartInventoryRepository
 {
-    private readonly PartExchangeDbContext _db;
+    private readonly ApplicationContext _db;
 
-    public PartInventoryRepository(PartExchangeDbContext db) => _db = db;
+    public PartInventoryRepository(ApplicationContext db) => _db = db;
 
     /// <summary>
     /// Adds inventory for a station.
@@ -46,17 +46,32 @@ public class PartInventoryRepository : IPartInventoryRepository
     /// <summary>
     /// Finds stations in the specified city that have the given part in stock.
     /// </summary>
-    public async Task<IEnumerable<(Domain.Entities.FuelStation Station, StationInventory Inventory)>> FindPartInCityAsync(string city, string partNumber)
+    public async Task<List<(Domain.Models.FuelStation Station, StationInventory Inventory)>> FindPartInCityAsync(
+        string city, string partNumber)
     {
         var part = await _db.Parts.FirstOrDefaultAsync(p => p.PartNumber == partNumber);
-        if (part == null) return Enumerable.Empty<(Domain.Entities.FuelStation, StationInventory)>();
+        if (part == null)
+            return new List<(Domain.Models.FuelStation, StationInventory)>();
 
-        var query = from s in _db.FuelStations
-                    join inv in _db.StationInventories on s.Id equals inv.StationId
-                    where s.City == city && inv.PartId == part.Id && inv.Quantity > 0
-                    select new { Station = s, Inventory = inv };
+        var query = _db.FuelStations
+            .Join(
+                _db.StationInventories,
+                station => station.Id,
+                inventory => inventory.StationId,
+                (station, inventory) => new { Station = station, Inventory = inventory }
+            )
+            .Where(x => x.Station.City == city
+                        && x.Inventory.PartId == part.Id
+                        && x.Inventory.Quantity > 0);
 
-        var list = await query.ToListAsync();
-        return list.Select(x => (x.Station, x.Inventory));
+        // ابتدا نتیجه را از دیتابیس بگیر (ToListAsync)
+        var anonymousList = await query.ToListAsync();
+
+        // سپس در حافظه به Tuple تبدیل کن
+        var result = anonymousList
+            .Select(x => (Station: x.Station, Inventory: x.Inventory))
+            .ToList();
+
+        return result;
     }
 }

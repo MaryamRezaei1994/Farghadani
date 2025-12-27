@@ -1,5 +1,5 @@
 using FuelStation.PartExchange.Domain.Interfaces;
-using FuelStation.PartExchange.Domain.Entities;
+using FuelStation.PartExchange.Domain.Models;
 
 namespace FuelStation.PartExchange.Infrastructure.Services;
 
@@ -8,31 +8,37 @@ namespace FuelStation.PartExchange.Infrastructure.Services;
 /// </summary>
 public class PartMatchingService : IPartMatchingService
 {
-    private readonly IFuelStationRepository _stationRepo;
+    private readonly IFuelStationRepository _fuelStationRepository;
     private readonly IPartInventoryRepository _inventoryRepo;
 
     /// <summary>
     /// Initializes a new instance of <see cref="PartMatchingService"/>.
     /// </summary>
-    public PartMatchingService(IFuelStationRepository stationRepo, IPartInventoryRepository inventoryRepo)
+    public PartMatchingService(IPartInventoryRepository inventoryRepo, IFuelStationRepository fuelStationRepository)
     {
-        _stationRepo = stationRepo;
         _inventoryRepo = inventoryRepo;
+        _fuelStationRepository = fuelStationRepository;
     }
 
-    /// <summary>
     /// Finds supplier stations in the same city that have sufficient quantity of the requested part.
-    /// </summary>
-    /// <param name="requestingStationId">The requesting station identifier.</param>
-    /// <param name="partNumber">The part number to find.</param>
-    /// <param name="quantity">Required quantity.</param>
-    /// <returns>Enumerable of station and inventory tuples that can supply the part.</returns>
-    public async Task<IEnumerable<(Domain.Entities.FuelStation Station, StationInventory Inventory)>> FindSuppliersAsync(Guid requestingStationId, string partNumber, int quantity)
+    public async Task<List<(Domain.Models.FuelStation Station, StationInventory Inventory)>> FindPartInCityAsync(
+        Guid requestingStationId, int quantity, string partNumber)
     {
-        var requesting = await _stationRepo.GetByIdAsync(requestingStationId);
-        if (requesting == null) return Enumerable.Empty<(Domain.Entities.FuelStation, StationInventory)>();
-
-        var candidates = await _inventoryRepo.FindPartInCityAsync(requesting.City, partNumber);
-        return candidates.Where(x => x.Inventory.Quantity >= quantity && x.Station.Id != requestingStationId);
+        var conditionList = new List<(Domain.Models.FuelStation Station, StationInventory Inventory)>();
+        var requesting = new Domain.Models.FuelStation();
+        
+        requesting = await _fuelStationRepository.GetByIdAsync(requestingStationId);
+        if (requesting is null)
+        {
+            return null;
+        }
+        conditionList = await _inventoryRepo.FindPartInCityAsync(requesting.City, partNumber);
+        if (conditionList is null)
+        {
+            return conditionList.Where(x => x.Inventory.Quantity >= quantity && x.Station.Id != requestingStationId) as
+                List<(Domain.Models.FuelStation Station, StationInventory Inventory)>;
+        }
+        return conditionList;
+        
     }
 }

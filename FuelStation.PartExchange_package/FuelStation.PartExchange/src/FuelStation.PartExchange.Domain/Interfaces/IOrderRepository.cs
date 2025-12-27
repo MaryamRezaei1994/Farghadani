@@ -1,4 +1,4 @@
-using FuelStation.PartExchange.Domain.Entities;
+using FuelStation.PartExchange.Domain.Models;
 
 namespace FuelStation.PartExchange.Domain.Interfaces;
 
