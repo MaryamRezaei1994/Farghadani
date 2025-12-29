@@ -9,14 +9,13 @@ public class MinIoSetOptions
     public string Endpoint { get; set; } = string.Empty; // e.g. "localhost:9000"
     public string AccessKey { get; set; } = string.Empty;
     public string SecretKey { get; set; } = string.Empty;
-    public bool UseSSL { get; set; } = false; // اگر از HTTPS استفاده می‌کنی، true کن
+    public bool UseSSL { get; set; } = false;
 }
-
 public class MinIoClientProvider
 {
     private readonly MinioClient _client;
 
-    public MinIoClientProvider(IOptions<MinIoSetOptions> options, MinioClient client)
+    public MinIoClientProvider(IOptions<MinIoSetOptions> options)
     {
         var opt = options.Value;
 
@@ -27,6 +26,5 @@ public class MinIoClientProvider
             .Build();
     }
 
-    public MinioClient? GetClient() => _client;
+    public MinioClient GetClient() => _client;
 }
-
