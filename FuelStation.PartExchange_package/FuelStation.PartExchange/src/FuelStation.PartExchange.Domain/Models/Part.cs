@@ -1,8 +1,10 @@
+using MemoryPack;
+
 namespace FuelStation.PartExchange.Domain.Models;
 
-public class Part
+[MemoryPackable]
+public partial class Part :BaseModel
 {
-    public Guid Id { get; set; }
     public string PartNumber { get; set; } = null!; // unique
     public string Name { get; set; } = null!;
 }

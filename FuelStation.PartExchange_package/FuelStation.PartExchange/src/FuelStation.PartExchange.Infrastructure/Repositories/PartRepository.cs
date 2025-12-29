@@ -2,31 +2,12 @@ using System.Linq.Expressions;
 using System.Transactions;
 using FuelStation.PartExchange.Domain.Interfaces;
 using FuelStation.PartExchange.Domain.Models;
-using FuelStation.PartExchange.Infrastructure.Context;
-using Microsoft.EntityFrameworkCore;
 
 namespace FuelStation.PartExchange.Infrastructure.Repositories;
 
-public class OrderRepository : IRepository<Order>
+public class PartRepository : IRepository<Part>
 {
-    private readonly ApplicationContext _db;
-
-    public OrderRepository(ApplicationContext db) => _db = db;
-
-    public async Task AddAsync(Order order)
-    {
-        await _db.Orders.AddAsync(order);
-    }
-
-    public Task<Order?> GetByIdAsync(Guid id) => _db.Orders.FirstOrDefaultAsync(o => o.Id == id);
-
-    public Task UpdateAsync(Order order)
-    {
-        _db.Orders.Update(order);
-        return Task.CompletedTask;
-    }
-
-    public Task<bool> AddEntity(Order entity)
+    public Task<bool> AddEntity(Part entity)
     {
         throw new NotImplementedException();
     }
@@ -41,23 +22,23 @@ public class OrderRepository : IRepository<Order>
         throw new NotImplementedException();
     }
 
-    public IQueryable<Order> GetEntitiesByQuery(bool isNotTracking = true, params Expression<Func<Order, object>>[] includes)
+    public IQueryable<Part> GetEntitiesByQuery(bool isNotTracking = true, params Expression<Func<Part, object>>[] includes)
     {
         throw new NotImplementedException();
     }
 
-    public IQueryable<Order> GetEntitiesByQueryIgnoreFilter(Expression<Func<Order, bool>> predicate, bool isNotTracking = true,
-        params Expression<Func<Order, object>>[] includes)
+    public IQueryable<Part> GetEntitiesByQueryIgnoreFilter(Expression<Func<Part, bool>> predicate, bool isNotTracking = true,
+        params Expression<Func<Part, object>>[] includes)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Order?> GetEntitiesById(Guid id)
+    public Task<Part?> GetEntitiesById(Guid id)
     {
         throw new NotImplementedException();
     }
 
-    public void RemoveEntity(Order entity)
+    public void RemoveEntity(Part entity)
     {
         throw new NotImplementedException();
     }
@@ -67,7 +48,7 @@ public class OrderRepository : IRepository<Order>
         throw new NotImplementedException();
     }
 
-    public Task HardRemoveEntity(Order entity)
+    public Task HardRemoveEntity(Part entity)
     {
         throw new NotImplementedException();
     }
@@ -77,7 +58,7 @@ public class OrderRepository : IRepository<Order>
         throw new NotImplementedException();
     }
 
-    public Task UpdateEntity(Order entity)
+    public Task UpdateEntity(Part entity)
     {
         throw new NotImplementedException();
     }

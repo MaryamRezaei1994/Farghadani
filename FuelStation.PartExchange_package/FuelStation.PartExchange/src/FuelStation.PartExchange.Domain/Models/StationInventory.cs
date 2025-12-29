@@ -1,6 +1,9 @@
+using MemoryPack;
+
 namespace FuelStation.PartExchange.Domain.Models;
 //نگه داری موجودی یک قطعه برای یک ایستگاه سوخت
-public class StationInventory
+[MemoryPackable]
+public partial class StationInventory : BaseModel
 {
     public Guid StationId { get; set; }
     public Guid PartId { get; set; }

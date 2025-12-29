@@ -1,8 +1,9 @@
-namespace FuelStation.PartExchange.Domain.Models;
+using MemoryPack;
 
-public class FuelStation
+namespace FuelStation.PartExchange.Domain.Models;
+[MemoryPackable]
+public partial class FuelStation : BaseModel
 {
-    public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public string City { get; set; } = null!;
     public string Address { get; set; } = null!;

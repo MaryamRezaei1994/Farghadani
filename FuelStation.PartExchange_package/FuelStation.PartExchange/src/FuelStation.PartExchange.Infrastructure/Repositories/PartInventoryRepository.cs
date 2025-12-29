@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Transactions;
 using FuelStation.PartExchange.Domain.Interfaces;
 using FuelStation.PartExchange.Domain.Models;
 using FuelStation.PartExchange.Infrastructure.Context;
@@ -8,7 +10,7 @@ namespace FuelStation.PartExchange.Infrastructure.Repositories;
 /// <summary>
 /// Repository for managing station inventory and parts.
 /// </summary>
-public class PartInventoryRepository : IPartInventoryRepository
+public class PartInventoryRepository : IPartInventoryRepository, IRepository<PartInventoryRepository>
 {
     private readonly ApplicationContext _db;
 
@@ -73,5 +75,76 @@ public class PartInventoryRepository : IPartInventoryRepository
             .ToList();
 
         return result;
+    }
+
+    public Task<bool> AddEntity(PartInventoryRepository entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<List<T>> FromSqlQuery<T>(FormattableString sql)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ExecureSqlQuery(FormattableString sql)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IQueryable<PartInventoryRepository> GetEntitiesByQuery(bool isNotTracking = true, params Expression<Func<PartInventoryRepository, object>>[] includes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IQueryable<PartInventoryRepository> GetEntitiesByQueryIgnoreFilter(Expression<Func<PartInventoryRepository, bool>> predicate, bool isNotTracking = true,
+        params Expression<Func<PartInventoryRepository, object>>[] includes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<PartInventoryRepository?> GetEntitiesById(Guid id)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void RemoveEntity(PartInventoryRepository entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task RemoveEntity(Guid entityId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task HardRemoveEntity(PartInventoryRepository entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task SaveChanges()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateEntity(PartInventoryRepository entity)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task CloseConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task OpenConnection()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void EnlistTransaction(Transaction transaction)
+    {
+        throw new NotImplementedException();
     }
 }

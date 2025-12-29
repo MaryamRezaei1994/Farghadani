@@ -12,7 +12,7 @@ public interface IRepository<TEntity>
     IQueryable<TEntity> GetEntitiesByQuery(bool isNotTracking = true,
         params Expression<Func<TEntity, object>>[] includes);
 
-    IQueryable<TEntity> GetEntitiesByQueryIgnoreFilter(bool isNotTracking = true,
+    IQueryable<TEntity> GetEntitiesByQueryIgnoreFilter(Expression<Func<TEntity, bool>> predicate, bool isNotTracking = true,
         params Expression<Func<TEntity, object>>[] includes);
 
     Task<TEntity?> GetEntitiesById(Guid id);

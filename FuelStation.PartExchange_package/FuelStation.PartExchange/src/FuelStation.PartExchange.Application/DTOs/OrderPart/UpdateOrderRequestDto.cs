@@ -3,8 +3,11 @@ using FuelStation.PartExchange.Domain.Enums;
 
 namespace FuelStation.PartExchange.Application.DTOs.OrderPart;
 
-public abstract class UpdateOrderRequest
+public abstract class UpdateOrderRequestDto
 {
+    [Required(ErrorMessage = "The orderId field is required")]
+    public Guid OrderId { get; set; }
+    
     [Required(ErrorMessage = "The requestingStationId field is required")]
     public Guid RequestingStationId { get; set; }
     

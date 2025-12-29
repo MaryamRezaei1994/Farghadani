@@ -1,11 +1,13 @@
 using FuelStation.PartExchange.Domain.Enums;
+using MemoryPack;
 
 namespace FuelStation.PartExchange.Domain.Models;
 
-public class PartRequest
+[MemoryPackable]
+public partial class PartRequest : BaseModel
 {
-    public Guid Id { get; set; }
     public Guid StationId { get; set; }
+
     //the name of the part
     public string PartNumber { get; set; }
     public int Quantity { get; set; }

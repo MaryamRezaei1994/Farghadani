@@ -1,7 +1,6 @@
 ﻿using Application.Dto;
-using Microsoft.AspNetCore.Http;
 
-namespace Application.Interfaces.General;
+namespace FuelStation.PartExchange.Application.Interfaces.General;
 
 public interface IFileService
 {

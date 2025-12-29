@@ -11,8 +11,6 @@ namespace FuelStation.PartExchange.Infrastructure.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseModel
 {
-
-
     private readonly ApplicationContext _context;
     private readonly DbSet<TEntity> _dbSet;
     private readonly ILogger<Repository<TEntity>> _logger;
@@ -23,11 +21,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
         this._context = context;
         _logger = logger;
         this._dbSet = this._context.Set<TEntity>();
-
     }
 
     public IQueryable<TEntity> GetEntitiesByQuery(bool isNotTracking = true,
-                   params Expression<Func<TEntity, object>>[] includes)
+        params Expression<Func<TEntity, object>>[] includes)
     {
         IQueryable<TEntity> query = null;
         if (isNotTracking is false)
@@ -46,28 +43,48 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
 
         return query;
     }
-    public IQueryable<TEntity> GetEntitiesByQueryIgnoreFilter(bool isNotTracking = true,
-               params Expression<Func<TEntity, object>>[] includes)
+
+    public IQueryable<TEntity> GetEntitiesByQueryIgnoreFilter(Expression<Func<TEntity, bool>> predicate,
+        bool isNotTracking = true,
+        params Expression<Func<TEntity, object>>[] includes)
     {
-        IQueryable<TEntity> query = null;
-        if (isNotTracking is false)
-            query = _dbSet.IgnoreQueryFilters().AsQueryable();
-        else
-            query = _dbSet.IgnoreQueryFilters().AsQueryable().AsNoTracking();
+        // IQueryable<TEntity> query = null;
+        // if (isNotTracking is false)
+        //     query = _dbSet.IgnoreQueryFilters().AsQueryable();
+        // else
+        //     query = _dbSet.IgnoreQueryFilters().AsQueryable().AsNoTracking();
+        //
+        //
+        // includes.ToList().ForEach(include =>
+        // {
+        //     if (include != null)
+        //     {
+        //         query = query.Include(include);
+        //     }
+        // });
+        //
+        // return query;
+        
+        var query = isNotTracking 
+            ? _dbSet.IgnoreQueryFilters().AsNoTracking()
+            : _dbSet.IgnoreQueryFilters();
 
+        query = query.Where(predicate); // ✅ اعمال فیلتر
 
-        includes.ToList().ForEach(include =>
+        if (includes != null)
         {
-            if (include != null)
+            foreach (var include in includes)
             {
-                query = query.Include(include);
+                if (include != null)
+                    query = query.Include(include);
             }
-        });
+        }
 
         return query;
     }
+
     public IQueryable<TEntity> GetEntitiesByQueryTracking(
-    params Expression<Func<TEntity, object>>[] includes)
+        params Expression<Func<TEntity, object>>[] includes)
     {
         var query = _dbSet.AsQueryable();
 
@@ -95,12 +112,12 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
             throw;
         }
     }
+
     public async Task ExecureSqlQuery(FormattableString sql)
     {
         try
         {
-        await _context.Database.ExecuteSqlAsync(sql);
-
+            await _context.Database.ExecuteSqlAsync(sql);
         }
         catch (Exception ex)
         {
@@ -108,7 +125,6 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
             throw;
         }
     }
-
 
 
     public async Task<TEntity?> GetEntitiesById(Guid id) => await _dbSet.FirstOrDefaultAsync(s => s.Id == id);
@@ -139,7 +155,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
     {
         try
         {
-            entity.UpdatedAt = DateTime.UtcNow; 
+            entity.UpdatedAt = DateTime.UtcNow;
             _dbSet.Update(entity);
         }
         catch (Exception e)
@@ -199,11 +215,10 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseMode
         }
         catch (Exception ex)
         {
-
             throw;
         }
     }
-    
+
     public async Task CloseConnection() => await _context.Database.CloseConnectionAsync();
 
     public async Task OpenConnection() => await _context.Database.OpenConnectionAsync();

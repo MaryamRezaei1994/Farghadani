@@ -1,14 +1,15 @@
-using Application.Interfaces.General;
 using FuelStation.PartExchange.Application.DTOs;
 using FuelStation.PartExchange.Application.DTOs.OrderPart;
 using FuelStation.PartExchange.Application.Interfaces;
 using FuelStation.PartExchange.Application.Interfaces.General;
+using FuelStation.PartExchange.Domain.Enums;
 using FuelStation.PartExchange.Domain.Interfaces;
 using FuelStation.PartExchange.Domain.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
+using IDatabase = StackExchange.Redis.IDatabase;
 
 namespace FuelStation.PartExchange.Application.Services;
 
@@ -22,7 +23,6 @@ public class OrderPartService : IOrderPartService
     private readonly IRepository<StationInventory> _stationRepo;
     private readonly IRepository<Domain.Models.FuelStation> _fuelStationRepo;
     private IPartInventoryRepository _inventoryRepo;
-    private IUnitOfWork _uow;
     private readonly IPartMatchingService _matchingService;
     private readonly IStringLocalizer<OrderPartService> _orderLocalizer;
     private readonly IAPIService _apiService;
@@ -32,35 +32,32 @@ public class OrderPartService : IOrderPartService
     public static string CacheKeyOrderList = "DM-OrderListUser-";
     private readonly TimeSpan _cacheExpirationTime = TimeSpan.FromMinutes(5);
 
-    public OrderPartService(ICacheProvider connection,
+    public OrderPartService(
+        ICacheProvider connection,
         IRepository<Order> orderRepository,
         IRepository<Part> partRepository,
         IRepository<StationInventory> stationRepository,
         IRepository<Domain.Models.FuelStation> fuelStationRepository,
         IPartInventoryRepository inventoryRepository,
-        IUnitOfWork uow,
         IPartMatchingService matchingService,
-        ILogger<OrderPartService> logService,
-        IStringLocalizer<OrderPartService> orderLocalizer, IAPIService apiService,
-        IFileService fileService, IHttpContextAccessor httpContextAccessor
-        , ILogger<OrderPartService> logger, IRepository<Part> partRepo,
-        IRepository<Domain.Models.FuelStation> fuelStationRepo)
+        ILogger<OrderPartService> logger,
+        IStringLocalizer<OrderPartService> orderLocalizer,
+        IAPIService apiService,
+        IFileService fileService,
+        IHttpContextAccessor httpContextAccessor)
     {
-        LogService = logService;
         _cache = connection.Database;
         _orderRepo = orderRepository;
-        _orderRepo = orderRepository;
+        _partRepo = partRepository;
         _stationRepo = stationRepository;
+        _fuelStationRepo = fuelStationRepository;
         _inventoryRepo = inventoryRepository;
-        _uow = uow;
         _matchingService = matchingService;
+        _logger = logger;
         _orderLocalizer = orderLocalizer;
         _apiService = apiService;
         _fileService = fileService;
         _httpContextAccessor = httpContextAccessor;
-        _logger = logger;
-        _partRepo = partRepo;
-        _fuelStationRepo = fuelStationRepo;
     }
 
     public async Task<ResponseDto> AddOrder(AddOrderRequestDto input, string username)
@@ -132,13 +129,13 @@ public class OrderPartService : IOrderPartService
                 SupplierStationId = supplierStation.Id,
                 PartId = inventory.PartId,
                 Quantity = input.Quantity,
-                Status = FuelStation.PartExchange.Domain.Enums.OrderStatus.Pending,
+                Status = Domain.Enums.OrderStatus.Pending,
                 CreatedAt = DateTime.UtcNow
             };
 
             await _orderRepo.AddEntity(order);
-            request.Status = FuelStation.PartExchange.Domain.Enums.PartRequestStatus.Matched;
-            await _uow.SaveChangesAsync();
+            request.Status = Domain.Enums.PartRequestStatus.Matched;
+            await _orderRepo.SaveChanges();
             return new ResponseDto
             {
                 StatusCode = 200, Message =
@@ -154,28 +151,148 @@ public class OrderPartService : IOrderPartService
         }
     }
 
-    public Task<ResponseDto> GetOrderYId(Guid orderId, string username)
+    public async Task<ResponseDto> GetOrderById(Guid orderId, string username)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var order = await _orderRepo.GetEntitiesById(orderId);
+            if (order is null)
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 400, Message =
+                    [
+                        _orderLocalizer["Order not found"]
+                    ]
+                };
+            }
+
+            return new ResponseDto
+            {
+                StatusCode = 200, Message =
+                [
+                    _orderLocalizer["Get order by id successful." + order]
+                ]
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
-    public Task<ResponseDto> DeleteOrder(DeleteOrderByIdRequest request, string username)
+    public async Task<ResponseDto> GetAllOrders(GetAllOrdersRequestDto requestDto, string username)
     {
-        throw new NotImplementedException();
+        try
+        {
+            List<Order> orders = new List<Order>();
+            orders = await _orderRepo.GetEntitiesByQueryIgnoreFilter(x => !x.IsDeleted).ToListAsync();
+            if (orders is null)
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 200, Message =
+                    [
+                        _orderLocalizer["No orders found"]
+                    ]
+                };
+            }
+
+            return new ResponseDto
+            {
+                StatusCode = 200, Message =
+                [
+                    _orderLocalizer["Get all orders is successful." + orders.Count]
+                ]
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
-    public Task<ResponseDto> GetAllOrders(GetAllOrdersRequest request, string username)
+    public async Task<ResponseDto> DeleteOrderById(Guid orderId, string username)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var order = await _orderRepo.GetEntitiesById(orderId);
+            if (order is null)
+            {
+                return new ResponseDto
+                {
+                    StatusCode = 400, Message =
+                    [
+                        _orderLocalizer["Order not found"]
+                    ]
+                };
+            }
+
+            _orderRepo.RemoveEntity(order);
+            await _orderRepo.SaveChanges();
+            return new ResponseDto
+            {
+                StatusCode = 200, Message =
+                [
+                    _orderLocalizer["Order is deleted successful."]
+                ]
+            };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
-    public Task<ResponseDto> DeleteOrderById(Guid orderId, string username)
+    public async Task<ResponseDto> UpdateOrder(UpdateOrderRequestDto requestDto, string username)
     {
-        throw new NotImplementedException();
+        var getOrder = await _orderRepo.GetEntitiesById(requestDto.OrderId);
+        if (getOrder == null) return new ResponseDto
+        {
+            StatusCode = 400, Message =
+            [
+                _orderLocalizer["Order not found"]
+            ]
+        };
+        getOrder.RequestingStationId = requestDto.RequestingStationId;
+        getOrder.SupplierStationId = requestDto.SupplierStationId;
+        getOrder.PartId = requestDto.PartId;
+        getOrder.Quantity = requestDto.Quantity;
+        getOrder.Status = requestDto.Status;
+        getOrder.UpdatedAt = DateTime.UtcNow;
+        await _orderRepo.UpdateEntity(getOrder);
+        await _orderRepo.SaveChanges();
+        return new ResponseDto
+        {
+            StatusCode = 200, Message =
+            [
+                _orderLocalizer["Update Order id successful." + getOrder]
+            ]
+        };
     }
 
-    public Task<ResponseDto> UpdateOrder(UpdateOrderRequest request, string username)
+    public async  Task<ResponseDto> ConfirmOrder(Guid dtoId, string userName)
     {
-        throw new NotImplementedException();
+        var order = await _orderRepo.GetEntitiesById(dtoId);
+        if (order == null) return new ResponseDto
+        {
+            StatusCode = 400, Message =
+            [
+                _orderLocalizer["Order not found"]
+            ]
+        };
+        order.Status = OrderStatus.Confirmed;
+        await _orderRepo.UpdateEntity(order);
+        await _orderRepo.SaveChanges();
+        return new ResponseDto
+        {
+            StatusCode = 200, Message =
+            [
+                _orderLocalizer["Confirm Order id successful." + order]
+            ]
+        };
     }
 }
