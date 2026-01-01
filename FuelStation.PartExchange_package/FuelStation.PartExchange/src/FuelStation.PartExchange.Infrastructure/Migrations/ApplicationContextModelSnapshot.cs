@@ -132,7 +132,7 @@ namespace FuelStation.PartExchange.Infrastructure.Migrations
                     b.Property<Guid>("RequestingStationId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("SupplierStationId")

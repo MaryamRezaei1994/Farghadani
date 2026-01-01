@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FuelStation.PartExchange.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20251228122152_Initial")]
+    [Migration("20251231122520_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -135,7 +135,7 @@ namespace FuelStation.PartExchange.Infrastructure.Migrations
                     b.Property<Guid>("RequestingStationId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("SupplierStationId")
